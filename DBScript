@@ -1,0 +1,51 @@
+create database pos;
+use pos;
+
+create table customer
+(
+	id varchar(6) not null
+		primary key,
+	name varchar(50) null,
+	address varchar(50) null
+);
+
+create table item
+(
+	code varchar(6) not null
+		primary key,
+	description varchar(50) null,
+	unitPrice decimal(8,2) null,
+	qtyOnHand int null
+);
+
+create table `order`
+(
+	id varchar(6) not null
+		primary key,
+	date date null,
+	customerId varchar(6) not null,
+	constraint order_ibfk_1
+		foreign key (customerId) references customer (id)
+			on update cascade on delete cascade
+);
+
+create index customerId
+	on `order` (customerId);
+
+create table orderdetail
+(
+	orderId varchar(6) not null,
+	itemCode varchar(6) not null,
+	qty int null,
+	unitPrice decimal(8,2) null,
+	primary key (orderId, itemCode),
+	constraint orderdetail_ibfk_1
+		foreign key (orderId) references `order` (id)
+			on update cascade on delete cascade,
+	constraint orderdetail_ibfk_2
+		foreign key (itemCode) references item (code)
+			on update cascade on delete cascade
+);
+
+create index itemCode
+	on orderdetail (itemCode);
